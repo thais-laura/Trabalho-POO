@@ -9,3 +9,5 @@ Dev: Thaís Laura Anício Andrade (NUSP: 14608765) \
 Grupo: Gabriella Castelari, Isabela Muller, Thaís Laura
 ## Histórico de Versões
 V1 (23/11/2024): Criação de funções para busca de filmes pelo nome (encontra informações como id, ano de lançamento, elenco, gêneros, média de avaliações, etc). Além disso, criação de padrão de conversão das classes (Usuario, Avaliacao e Filme) para o formato do Json, além das funções de escrita e leitura do arquivo.
+## Base de dados: IMDb
+"This program uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB."
