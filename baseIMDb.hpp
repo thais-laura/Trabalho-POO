@@ -9,6 +9,8 @@
 #include <sstream>
 #include <algorithm>
 #include <ctype.h>
+#include <regex>
+#include <queue>
 
 class Filme{};
 std::map<std::string,std::string> combGenero = {{"Adventure","Ação"}, {"War","Ação"},  
@@ -27,9 +29,11 @@ std::set<std::string> classeGenero = {"Action", "Comedy", "Animation", "Romance"
 void msg_erro_arquivo(){
     printf("Falha no processamento do arquivo\n");
 }
-std::vector<Filme>  buscaFilme(std::string nomeFilme);
+std::vector<Filme> buscaFilmeNome(std::string nomeFilme);
+Filme buscaFilmeId(std::string &id, std::unordered_map<std::string, Filme> listaConhecidos);
 std::vector<std::string> buscaElenco(std::string &id);
 void buscaAvaliacao(std::string &id, std::string &mediaAv, std::string &numAv);
 std::string converteMinusculo(std::string &str);
 void verificaGeneros(std::string &genero, std::string &subgenero, std::string &subsubgenero);
-
+std::vector<Filme> recomendacaoAtor(std::string &nome, std::unordered_map<std::string, Filme> listaConhecidos);
+std::vector<Filme> recomendaGenero(std::string genero, std::unordered_map<std::string, Filme> listaConhecidos);

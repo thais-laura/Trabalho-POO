@@ -1,4 +1,5 @@
 #include "./armazenamento.hpp"
+#include "./avaliacaoEfilmes.cpp"
 //jsoneditoronline.org
 using json = nlohmann::json;
 
@@ -45,17 +46,9 @@ void carregarFilmes(std::map<std::string, std::shared_ptr<Filme>>& filmes){
 
         // Carregando as avaliações
         for (const auto& av : jsonFilmes["avaliacoes"]) {
-            Avaliacao avaliacao(
-                av["login"].get<std::string>(),  // ID do usuário
-                av["titulo"].get<std::string>(),
-                av["nota"].get<double>(),
-                av["comentario"].get<std::string>()
-            );  // inicializador da avaliacao
-            filme->adicionarAvaliacao(avaliacao); // adiciona a avaliacao no usuario
+            filme->adicionarOuAtualizar(av["login"].get<std::string>(), av["nota"].get<double>(),
+                av["comentario"].get<std::string>()); // adiciona a avaliacao do usuario
         }
-// inserir atributos do usuario na lista de usuarios (em memoria)
-        filmes[jsonUsuario["login"]] = filme; 
-
     }
 }
 
@@ -79,6 +72,7 @@ void carregarUsuarios(std::map<std::string, std::shared_ptr<Usuario>>& usuarios)
         for (const auto& av : jsonUsuario["avaliacoes"]) {
             Avaliacao avaliacao(
                 av["login"].get<std::string>(),  // ID do usuário
+                av["id filme"].get<std::string>(),
                 av["titulo"].get<std::string>(),
                 av["nota"].get<double>(),
                 av["comentario"].get<std::string>()
@@ -91,7 +85,7 @@ void carregarUsuarios(std::map<std::string, std::shared_ptr<Usuario>>& usuarios)
     }
 }
 
-void verG(){
+/* void verG(){
     std::ifstream arqInfoFilmes("infoFilmes");
     if (!arqInfoFilmes.is_open()) {
         printf("Falha no processamento do arquivo\n");
@@ -128,4 +122,4 @@ void verG(){
     // }
     arqInfoFilmes.close();
 }
-
+ */

@@ -2,6 +2,8 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <unordered_map>
+using json = nlohmann::json;
 
 class Avaliacao {
 private:
@@ -57,34 +59,47 @@ public:
         out << "--------------------------\n";
         return out;
     }
+
+    nlohmann::json toJSON() const {
+        return {
+            {"login", _idUsuario},
+            {"id filme", _idFilme},
+            {"nome", _nomeFilme},
+            {"nota", _nota},
+            {"comentario", _comentario} // por ser um vector de outra classe, é necessário sobrecarrgear em avaliacoes
+        };
+    }
 };
 
 class Filme { // COLOCAR O ANO, DURACAO
 private:
     std::string _id;                 // ID único do filme
+    std::string _nome;
     std::string _genero;             // Gênero principal
     std::string _subgenero;          // Subgênero
+    int _ano;                        // Ano de lançamento
     std::vector<std::string> _elenco; // Vetor de strings para elenco
     bool _classificacao;            // Classificação indicativa: 1 = adulto, 0 = não adulto
     float _mediaBase;                // Média 
     int _nMediasBase;                // Número de avaliações na base de dados
     float _somaNotas;                // Soma total das notas para eficiência do código, pois em vez de recalcular a soma 
     //de todas as notas toda vez que a média é atualizada, armazenamos a soma para poder adicionar ou subtrair valores conforme necessário
-    std::map<std::string, Avaliacao> _avaliacoes; // Mapa para avaliações, chave é o ID do usuário
+    std::unordered_map<std::string, Avaliacao> _avaliacoes; // Mapa para avaliações, chave é o ID do usuário
 
 public:
     // Construtor vazio , TERMINAR DE INICIALIZAR
     Filme() : _classificacao(false), _mediaBase(-1), _nMediasBase(0), _somaNotas(0) {}
 
     // Construtor completo
-    Filme(const std::string& id, const std::string& genero, const std::string& subgenero,
+    Filme(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
           const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase)
-        : _id(id), _genero(genero), _subgenero(subgenero), _elenco(elenco),
+        : _id(id), _nome(nome), _genero(genero), _subgenero(subgenero), _elenco(elenco),
           _classificacao(classificacao), _mediaBase(mediaBase), _nMediasBase(nMediasBase), _somaNotas(mediaBase * nMediasBase) {}
 
-    void set(const std::string& id, const std::string& genero, const std::string& subgenero,
+    void set(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
              const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase) {
         _id = id;
+        _nome = nome;
         _genero = genero;
         _subgenero = subgenero;
         _elenco = elenco;
@@ -143,7 +158,6 @@ public:
         }
     }
 
-
     // Mostrar melhor e pior avaliação
     void mostrarMelhorEPior() const {
         if (_avaliacoes.empty()) {     // Verifica se há avaliações registradas
@@ -183,6 +197,7 @@ public:
     // Sobrecarga do operador <<
     friend std::ostream& operator<<(std::ostream& out, const Filme& filme) {
         out << "ID: " << filme._id << "\n";
+        out << "Nome: " << filme._nome << "\n";
         out << "Genero: " << filme._genero << " (" << filme._subgenero << ")\n";
         out << "Elenco: ";
         for (const auto& ator : filme._elenco) {
@@ -195,5 +210,24 @@ public:
             out << avaliacao;
         }
         return out;
+    }
+
+    nlohmann::json toJSON() const {
+        std::vector<nlohmann::json> avaliacoesJson;
+        for (auto [id, av] : _avaliacoes) {   // criar os modelos para salvar no arquivo a partir da sobrecarga
+            avaliacoesJson.push_back(av.toJSON());
+        }
+        return {
+            {"id", _id},
+            {"titulo", _nome},
+            {"elenco", _elenco},    // apesar de ser um vector, o json consegue manipular as std::string
+            {"genero", _genero},
+            {"subgenero", _subgenero},
+            {"ano", _ano},
+            {"classificacao", _classificacao},
+            {"media", _mediaBase},
+            {"quantidade de avaliações", _nMediasBase},
+            {"avaliacoes", avaliacoesJson} // por ser um vector de outra classe, é necessário sobrecarrgear em avaliacoes
+        };
     }
 };
