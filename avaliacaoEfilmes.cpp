@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <vector>
 #include <algorithm>
+#include "./avaliacaoEfilmes.hpp"
 
 class Avaliacao {
 private:
