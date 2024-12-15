@@ -59,6 +59,7 @@ public:
         };
     }
 
+
     // Friend para exibição
     friend std::ostream& operator<<(std::ostream& out, const Avaliacao& avaliacao) {
         out << "Filme: " << avaliacao._nomeFilme << " (ID: " << avaliacao._idFilme << ")\n";
