@@ -1,9 +1,9 @@
 #include <iostream>
 #include <string>
 #include <map>
-#include <vector>
 #include <unordered_map>
-using json = nlohmann::json;
+#include <vector>
+#include <algorithm>
 
 class Avaliacao {
 private:
@@ -48,6 +48,16 @@ public:
         return _comentario; 
     }
 
+    nlohmann::json toJSON() const {
+        return {
+            {"login", _idUsuario},
+            {"id filme", _idFilme},
+            {"nome", _nomeFilme},
+            {"nota", _nota},
+            {"comentario", _comentario} // por ser um vector de outra classe, é necessário sobrecarrgear em avaliacoes
+        };
+    }
+
     // Friend para exibição
     friend std::ostream& operator<<(std::ostream& out, const Avaliacao& avaliacao) {
         out << "Filme: " << avaliacao._nomeFilme << " (ID: " << avaliacao._idFilme << ")\n";
@@ -59,47 +69,51 @@ public:
         out << "--------------------------\n";
         return out;
     }
-
-    nlohmann::json toJSON() const {
-        return {
-            {"login", _idUsuario},
-            {"id filme", _idFilme},
-            {"nome", _nomeFilme},
-            {"nota", _nota},
-            {"comentario", _comentario} // por ser um vector de outra classe, é necessário sobrecarrgear em avaliacoes
-        };
-    }
 };
 
-class Filme { // COLOCAR O ANO, DURACAO
+// Função `recomendaGenero` declarada previamente
+extern std::vector<Filme> recomendaGenero(std::string genero, std::unordered_map<std::string, Filme> listaConhecidos);
+
+class Filme { 
 private:
     std::string _id;                 // ID único do filme
-    std::string _nome;
     std::string _genero;             // Gênero principal
     std::string _subgenero;          // Subgênero
-    int _ano;                        // Ano de lançamento
     std::vector<std::string> _elenco; // Vetor de strings para elenco
     bool _classificacao;            // Classificação indicativa: 1 = adulto, 0 = não adulto
+    int _ano;                        // Ano de lançamento do filme
+    int _duracao;                    // Duração do filme em minutos
     float _mediaBase;                // Média 
     int _nMediasBase;                // Número de avaliações na base de dados
     float _somaNotas;                // Soma total das notas para eficiência do código, pois em vez de recalcular a soma 
     //de todas as notas toda vez que a média é atualizada, armazenamos a soma para poder adicionar ou subtrair valores conforme necessário
-    std::unordered_map<std::string, Avaliacao> _avaliacoes; // Mapa para avaliações, chave é o ID do usuário
+    std::unordered_map<std::string, Avaliacao> _avaliacoes; 
 
 public:
-    // Construtor vazio , TERMINAR DE INICIALIZAR
-    Filme() : _classificacao(false), _mediaBase(-1), _nMediasBase(0), _somaNotas(0) {}
+    // Construtor vazio 
+    Filme() : _classificacao(false), _mediaBase(-1), _nMediasBase(0), _somaNotas(0), _ano(0), _duracao(0) {}
 
     // Construtor completo
-    Filme(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
-          const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase)
-        : _id(id), _nome(nome), _genero(genero), _subgenero(subgenero), _elenco(elenco),
-          _classificacao(classificacao), _mediaBase(mediaBase), _nMediasBase(nMediasBase), _somaNotas(mediaBase * nMediasBase) {}
+    Filme(const std::string& id, const std::string& genero, const std::string& subgenero,
+          const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao)
+        : _id(id), _genero(genero), _subgenero(subgenero), _elenco(elenco),
+          _classificacao(classificacao), _mediaBase(mediaBase), _nMediasBase(nMediasBase), _somaNotas(mediaBase * nMediasBase), _ano(ano), _duracao(duracao) {}
 
-    void set(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
-             const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase) {
+    // Construtor com integração ao `recomendaGenero`
+    Filme(const std::string& genero, const std::unordered_map<std::string, Filme>& listaConhecidos) {
+        auto recomendacoes = recomendaGenero(genero, listaConhecidos);
+
+        if (!recomendacoes.empty()) {
+            const Filme& filmeRecomendado = recomendacoes[0]; // Seleciona o filme com melhor avaliação
+            *this = filmeRecomendado; // Copia os dados do filme recomendado
+        } else {
+            std::cerr << "Nenhuma recomendacao encontrada para o genero: " << genero << std::endl;
+        }
+    }
+
+    void set(const std::string& id, const std::string& genero, const std::string& subgenero,
+             const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao) {
         _id = id;
-        _nome = nome;
         _genero = genero;
         _subgenero = subgenero;
         _elenco = elenco;
@@ -107,6 +121,8 @@ public:
         _mediaBase = mediaBase;
         _nMediasBase = nMediasBase;
         _somaNotas = mediaBase * nMediasBase;
+        _ano = ano;
+        _duracao = duracao;
     }
 
     std::string getId() const { return _id; }
@@ -116,6 +132,8 @@ public:
     bool getClassificacao() const { return _classificacao; }
     float getMediaBase() const { return _mediaBase; }
     int getNMediasBase() const { return _nMediasBase; }
+    int getAno() const { return _ano; }
+    int getDuracao() const { return _duracao; }
 
     // Adicionar ou atualizar uma avaliação
     void adicionarOuAtualizar(const std::string& idUsuario, float nota, const std::string& comentario = "") {
@@ -158,6 +176,7 @@ public:
         }
     }
 
+
     // Mostrar melhor e pior avaliação
     void mostrarMelhorEPior() const {
         if (_avaliacoes.empty()) {     // Verifica se há avaliações registradas
@@ -194,12 +213,20 @@ public:
         std::cout << "--------------------------\n";
     }
 
+    virtual ~Filme() = default; // Virtual destructor para herança
+
+    virtual std::string descricao() const {
+        return "Descricao generica de um filme.";
+    }
+
     // Sobrecarga do operador <<
     friend std::ostream& operator<<(std::ostream& out, const Filme& filme) {
         out << "ID: " << filme._id << "\n";
-        out << "Nome: " << filme._nome << "\n";
         out << "Genero: " << filme._genero << " (" << filme._subgenero << ")\n";
+        out << "Ano: " << filme._ano << "\n";
+        out << "Duracao: " << filme._duracao << " minutos\n";
         out << "Elenco: ";
+        out << filme.descricao() << "\n";
         for (const auto& ator : filme._elenco) {
             out << ator << ", ";
         }
@@ -224,10 +251,128 @@ public:
             {"genero", _genero},
             {"subgenero", _subgenero},
             {"ano", _ano},
+            {"duracao", _duracao},
             {"classificacao", _classificacao},
             {"media", _mediaBase},
             {"quantidade de avaliações", _nMediasBase},
             {"avaliacoes", avaliacoesJson} // por ser um vector de outra classe, é necessário sobrecarrgear em avaliacoes
         };
     }
+
 };
+
+// Classes derivadas para gêneros específicos com texto explicativo
+class Acao : public Filme {
+public:
+    Acao(const std::string& id, const std::vector<std::string>& elenco, int ano, int duracao)
+        : Filme(id, "acao", "", elenco, true, 0, 0, ano, duracao) {}
+
+    std::string descricao() const override {
+        return "Os filmes de acao sao conhecidos por sua intensidade e energia. Desse modo, eles trazem sequencias emocionantes, 
+        como por exemplo: lutas, perseguicoes, explosoes e muita adrenalina.";
+    }
+};
+
+class Comedia : public Filme {
+public:
+    Comedia(const std::string& id, const std::vector<std::string>& elenco, int ano, int duracao)
+        : Filme(id, "comedia", "", elenco, false, 0, 0, ano, duracao) {}
+
+    std::string descricao() const override {
+        return "A comedia apresenta personagens engracados, situacoes absurdas e dialogos espirituosos. Com isso,
+        esse genero busca entreter e proporcionar leveza ao publico.";
+    }
+};
+
+class Animacao : public Filme {
+public:
+    Animacao(const std::string& id, const std::vector<std::string>& elenco, int ano, int duracao)
+        : Filme(id, "animacao", "", elenco, false, 0, 0, ano, duracao) {}
+
+    std::string descricao() const override {
+        return "Os filmes de animacao encantam a todos com historias cativantes e visuais impressionantes, que transportam para mundos
+        magicos e ludicos. Podem ser criados com tecnicas como desenho a mao, modelagem 3D ou stop-motion.";
+    }
+};
+
+class Terror : public Filme {
+public:
+    Terror(const std::string& id, const std::vector<std::string>& elenco, int ano, int duracao)
+        : Filme(id, "terror", "", elenco, true, 0, 0, ano, duracao) {}
+
+    std::string descricao() const override {
+        return "O terror explora uma atmosfera sombria e cheia de suspense. Utilizando de artificios para causar sustos, 
+        trilhas sonoras arrepiantes e temas macabros, provocando fortes emocoes.";
+    }
+};
+
+class Romance : public Filme {
+public:
+    Romance(const std::string& id, const std::vector<std::string>& elenco, int ano, int duracao)
+        : Filme(id, "romance", "", elenco, false, 0, 0, ano, duracao) {}
+
+    std::string descricao() const override {
+        return "Os filmes de romance celebram o amor e as conexoes emocionais. Assim, contam historias de relacionamentos, 
+        dramas pessoais e momentos inesqueciveis.";
+    }
+};
+
+class Suspense : public Filme {
+public:
+    Suspense(const std::string& id, const std::vector<std::string>& elenco, int ano, int duracao)
+        : Filme(id, "suspense", "", elenco, true, 0, 0, ano, duracao) {}
+
+    std::string descricao() const override {
+        return "O suspense prende a atencao com tramas inteligentes, misterios intrigantes e reviravoltas inesperadas. 
+        Nesse sentido, desafia o publico a desvendar enigmas e a ficar atento em cada detalhe.";
+    }
+};
+
+class Drama : public Filme {
+public:
+    Drama(const std::string& id, const std::vector<std::string>& elenco, int ano, int duracao)
+        : Filme(id, "drama", "", elenco, false, 0, 0, ano, duracao) {}
+
+    std::string descricao() const override {
+        return "O drama explora narrativas intensas e emocionais, baseadas em conflitos humanos, dilemas morais ou
+        desafios da vida. Com historias profundas e reflexivas, esse genero conecta o publico as complexidades das relacoes.";
+    }
+};
+
+
+
+int main() {
+    // Criação de um filme
+    Filme filme(
+        "F001",                       // ID do filme
+        "Acao",                       // Gênero
+        "Aventura",                   // Subgênero
+        {"Ator 1", "Ator 2"},         // Elenco
+        true,                         // Classificação (1 = adulto)
+        8.0,                          // Média inicial da base de dados
+        2                             // Número de avaliações na base
+    );
+
+    // Adicionando algumas avaliações
+    filme.adicionarOuAtualizar("U001", 9.5, "Excelente filme, cheio de acao");
+    filme.adicionarOuAtualizar("U002", 7.0, "Gostei, mas poderia ter mais enredo");
+    filme.adicionarOuAtualizar("U003", 8.5, "Otimos efeitos especiais");
+
+    // Atualizando uma avaliação existente
+    filme.adicionarOuAtualizar("U002", 8.0, "Reassistindo, percebi mais detalhes");
+
+    // Removendo uma avaliação
+    filme.removerAvaliacao("U001");
+
+    // Exibindo as informações do filme
+    std::cout << "Informacoes do filme:\n";
+    std::cout << filme;
+
+    // Mostrando a melhor e a pior avaliação
+    std::cout << "\nMelhor e Pior Avaliacao:\n";
+    filme.mostrarMelhorEPior();
+
+    return 0;
+}
+
+
