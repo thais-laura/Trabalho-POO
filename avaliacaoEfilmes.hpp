@@ -1,11 +1,12 @@
-#ifndef FILME_HPP
-#define FILME_HPP
+#ifndef AVALIACAO_E_FILMES_HPP
+#define AVALIACAO_E_FILMES_HPP
 
 #include <iostream>
 #include <string>
-#include <map>
-#include <unordered_map>
 #include <vector>
+#include <unordered_map>
+#include <algorithm>
+#include <json_fwd.hpp>
 
 // Classe Avaliacao
 class Avaliacao {
@@ -35,13 +36,14 @@ public:
     friend std::ostream& operator<<(std::ostream& out, const Avaliacao& avaliacao);
 };
 
-// Função externa
-std::vector<Filme> recomendaGenero(std::string genero, std::unordered_map<std::string, Filme> listaConhecidos);
+// Função `recomendaGenero` declarada previamente
+extern std::vector<Filme> recomendaGenero(std::string genero, std::unordered_map<std::string, Filme> listaConhecidos);
 
 // Classe Filme
 class Filme {
-private:
+protected:
     std::string _id;
+    std::string _nome;
     std::string _genero;
     std::string _subgenero;
     std::vector<std::string> _elenco;
@@ -51,21 +53,23 @@ private:
     float _mediaBase;
     int _nMediasBase;
     float _somaNotas;
-    std::unordered_map<std::string, Avaliacao> _avaliacoes;
+    std::unordered_map<std::string, Avaliacao> _avaliacoes; 
 
 public:
     Filme();
-    Filme(const std::string& id, const std::string& genero, const std::string& subgenero,
+    Filme(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
           const std::vector<std::string>& elenco, bool classificacao, float mediaBase,
           int nMediasBase, int ano, int duracao);
 
+   // Construtor com integração ao `recomendaGenero`
     Filme(const std::string& genero, const std::unordered_map<std::string, Filme>& listaConhecidos);
 
-    void set(const std::string& id, const std::string& genero, const std::string& subgenero,
+    void set(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
              const std::vector<std::string>& elenco, bool classificacao, float mediaBase,
              int nMediasBase, int ano, int duracao);
 
     std::string getId() const;
+    std::string getNome() const;
     std::string getGenero() const;
     std::string getSubgenero() const;
     std::vector<std::string> getElenco() const;
@@ -80,55 +84,66 @@ public:
     void atualizarMedia();
     void mostrarMelhorEPior() const;
 
-    virtual ~Filme();
+    // Destrutor virtual
+    virtual ~Filme() = default;
     virtual std::string descricao() const;
-
+    // Sobrecarga de operadores
     friend std::ostream& operator<<(std::ostream& out, const Filme& filme);
 
+    // Métodos de serialização e descrição
     nlohmann::json toJSON() const;
+    
 };
 
-// Classes derivadas
+// Classes específicas para gêneros
 class Acao : public Filme {
 public:
-    Acao(const std::string& id, const std::vector<std::string>& elenco, int ano, int duracao);
+    Acao(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+          const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao);
     std::string descricao() const override;
 };
 
 class Comedia : public Filme {
 public:
-    Comedia(const std::string& id, const std::vector<std::string>& elenco, int ano, int duracao);
+    Comedia(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+          const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao);
     std::string descricao() const override;
 };
 
 class Animacao : public Filme {
 public:
-    Animacao(const std::string& id, const std::vector<std::string>& elenco, int ano, int duracao);
+    Animaca(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+          const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao);
     std::string descricao() const override;
 };
 
 class Terror : public Filme {
 public:
-    Terror(const std::string& id, const std::vector<std::string>& elenco, int ano, int duracao);
+    Terror(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+          const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao);
     std::string descricao() const override;
 };
 
 class Romance : public Filme {
 public:
-    Romance(const std::string& id, const std::vector<std::string>& elenco, int ano, int duracao);
+    Romance(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+          const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao);
     std::string descricao() const override;
 };
 
 class Suspense : public Filme {
 public:
-    Suspense(const std::string& id, const std::vector<std::string>& elenco, int ano, int duracao);
+    Suspense(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+          const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao);
     std::string descricao() const override;
 };
 
 class Drama : public Filme {
 public:
-    Drama(const std::string& id, const std::vector<std::string>& elenco, int ano, int duracao);
+    Drama(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+          const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao);
     std::string descricao() const override;
 };
 
-#endif // FILME_HPP
+#endif // AVALIACAO_E_FILMES_HPP
+
