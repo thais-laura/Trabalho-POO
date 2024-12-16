@@ -32,7 +32,7 @@ nlohmann::json Avaliacao::toJSON() const {
     };
 }
 
-std::ostream& Avaliacao::operator<<(std::ostream& out, const Avaliacao& avaliacao) {
+std::ostream& operator<<(std::ostream& out, const Avaliacao& avaliacao) {
     out << "Filme: " << avaliacao._nomeFilme << " (ID: " << avaliacao._idFilme << ")\n";
     out << "Usuario: " << avaliacao._idUsuario << "\n";
     out << "Nota: " << avaliacao._nota << "/10\n";
@@ -217,58 +217,59 @@ nlohmann::json Filme::toJSON() const {
     };
 }
 
-Acao(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+Acao::Acao(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
     const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao) {}
 
-std::string descricao() const override {
+std::string Acao::descricao() const override {
     return "Os filmes de acao sao conhecidos por sua intensidade e energia. Desse modo, eles trazem sequencias emocionantes, 
     como por exemplo: lutas, perseguicoes, explosoes e muita adrenalina.";
 }
 
-Comedia(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+Comedia::Comedia(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
     const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao) {}
 
-std::string descricao() const override {
+std::string Comedia::descricao() const override {
     return "A comedia apresenta personagens engracados, situacoes absurdas e dialogos espirituosos. Com isso,
     esse genero busca entreter e proporcionar leveza ao publico.";
 }
 
-Animacao(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+Animacao::Animacao(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
     const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao) {}
 
-std::string descricao() const override {
+std::string Animacao::descricao() const override {
     return "Os filmes de animacao encantam a todos com historias cativantes e visuais impressionantes, que transportam para mundos
     magicos e ludicos. Podem ser criados com tecnicas como desenho a mao, modelagem 3D ou stop-motion.";
 }
 
-Terror(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+Terror::Terror(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
     const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao) {}
 
-std::string descricao() const override {
+std::string Terror::descricao() const override {
     return "O terror explora uma atmosfera sombria e cheia de suspense. Utilizando de artificios para causar sustos, 
     trilhas sonoras arrepiantes e temas macabros, provocando fortes emocoes.";
 }
 
-Romance(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+Romance::Romance(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
     const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao) {}
 
-std::string descricao() const override {
+std::string Romance::descricao() const override {
     return "Os filmes de romance celebram o amor e as conexoes emocionais. Assim, contam historias de relacionamentos, 
     dramas pessoais e momentos inesqueciveis.";
 }
 
-Suspense(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+Suspense::Suspense(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
     const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao) {}
 
-std::string descricao() const override {
+std::string Suspense::descricao() const override {
     return "O suspense prende a atencao com tramas inteligentes, misterios intrigantes e reviravoltas inesperadas. 
     Nesse sentido, desafia o publico a desvendar enigmas e a ficar atento em cada detalhe.";
 }
 
-Drama(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+Drama::Drama(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
     const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao) {}
 
-std::string descricao() const override {
+std::string Drama::descricao() const override {
     return "O drama explora narrativas intensas e emocionais, baseadas em conflitos humanos, dilemas morais ou
     desafios da vida. Com historias profundas e reflexivas, esse genero conecta o publico as complexidades das relacoes.";
 }
+
