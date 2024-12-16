@@ -6,7 +6,7 @@
 #include <vector>
 #include <unordered_map>
 #include <algorithm>
-#include "json_fwd.hpp"
+#include <json_fwd.hpp>
 
 // Classe Avaliacao
 class Avaliacao {
@@ -41,7 +41,7 @@ extern std::vector<Filme> recomendaGenero(std::string genero, std::unordered_map
 
 // Classe Filme
 class Filme {
-private:
+protected:
     std::string _id;
     std::string _nome;
     std::string _genero;
@@ -112,7 +112,7 @@ public:
 
 class Animacao : public Filme {
 public:
-    Animaca(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+    Animacao(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
           const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao);
     std::string descricao() const override;
 };
@@ -146,4 +146,3 @@ public:
 };
 
 #endif // AVALIACAO_E_FILMES_HPP
-
