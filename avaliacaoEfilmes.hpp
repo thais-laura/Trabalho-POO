@@ -41,7 +41,7 @@ extern std::vector<Filme> recomendaGenero(std::string genero, std::unordered_map
 
 // Classe Filme
 class Filme {
-protected:
+private:
     std::string _id;
     std::string _nome;
     std::string _genero;
