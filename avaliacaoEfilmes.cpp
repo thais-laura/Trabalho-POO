@@ -67,7 +67,7 @@ Filme::Filme(const std::string& genero, const std::unordered_map<std::string, Fi
     }
 }
 
-void Filme::set(const std::string& id, const std::string& genero, const std::string& subgenero,
+void Filme::set(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
     const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao) {
     _id = id;
     _nome = nome;
@@ -272,5 +272,3 @@ std::string descricao() const override {
     return "O drama explora narrativas intensas e emocionais, baseadas em conflitos humanos, dilemas morais ou
     desafios da vida. Com historias profundas e reflexivas, esse genero conecta o publico as complexidades das relacoes.";
 }
-
-
