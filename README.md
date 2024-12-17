@@ -6,6 +6,7 @@
 ______________________________________________________
 ### Grupo: Gabriella Castelari, Isabela Muller, Thaís Laura
 ## Histórico de Versões
-V1 (23/11/2024): Criação de funções para busca de filmes pelo nome (encontra informações como id, ano de lançamento, elenco, gêneros, média de avaliações, etc). Além disso, criação de padrão de conversão das classes (Usuario, Avaliacao e Filme) para o formato do Json, além das funções de escrita e leitura do arquivo.
+V1 (23/11/2024): Criação de funções para busca de filmes pelo nome (encontra informações como id, ano de lançamento, elenco, gêneros, média de avaliações, etc). Além disso, criação de padrão de conversão das classes (Usuario, Avaliacao e Filme) para o formato do Json, além das funções de escrita e leitura do arquivo. \
+V2 (16/12/2024): Separação das classes Avaliacao e Filme, criação dos arquivos .hpp e de funções de recomendação. Também houve atualização dos métodos virtuais e modificação de estruturas para shared_ptr para se utilizar o polimorfismo
 ## Base de dados: IMDb
 "This program uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB."
