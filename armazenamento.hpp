@@ -1,3 +1,6 @@
+#ifndef ARMAZENAMENTO_HPP
+#define ARMAZENAMENTO_HPP
+
 #include <iostream>
 #include <fstream>
 #include <set>
@@ -7,13 +10,15 @@
 #include <algorithm>
 #include "./json.hpp"
 #include "./json_fwd.hpp"
-#include "./avaliacaoEfilmes.cpp"
-#include "./usuario.cpp"
+#include "./avaliacao.hpp"
+#include "./filme.hpp"
+#include "./usuario.hpp"
 
 void msg_erro_arq(){
     printf("Falha no processamento do arquivo\n");
 }
-void salvarFilmes(std::vector<Filme> listaFilmes);
-void salvarUsuarios(std::vector<Usuario> listaUsuarios);
-void carregarFilmes(std::map<std::string, std::shared_ptr<Filme>>& filmes);
-void carregarUsuarios(std::map<std::string, std::shared_ptr<Usuario>>& usuarios);
+void salvarFilmes(std::unordered_map<std::string, Filme> & listaFilmes);
+void salvarUsuarios(std::unordered_map<std::string, Usuario>& listaUsuarios);
+std::unordered_map<std::string, Usuario> carregarUsuarios();
+std::unordered_map<std::string, Filme> carregarFilmes();
+#endif // ARMAZENAMENTO_HPP

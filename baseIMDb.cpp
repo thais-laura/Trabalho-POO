@@ -1,7 +1,23 @@
 #include "./baseIMDb.hpp"
-#include "./avaliacaoEfilmes.cpp"
+// #include "./avaliacaoEfilmes.cpp"
+
 // "This [website, program, service, application, product] uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB."
 
+int main(){
+    std::unordered_map<std::string, std::shared_ptr<Filme>> lista;
+    std::string ator = "Heath Ledger";
+    std::vector<std::shared_ptr<Filme>> f = recomendaAtor(ator, lista);
+    for (const auto& filme : f) {
+        if (filme) {
+            std::cout << *filme;  // Desreferencia o shared_ptr e chama o operador <<
+        }
+    }
+    return 0;
+}
+
+void msg_erro_arquivo(){
+    printf("Falha no processamento do arquivo\n");
+}
 
 std::string converteMinusculo(std::string &str){
     std::string min;
@@ -11,14 +27,13 @@ std::string converteMinusculo(std::string &str){
     return min;
 }
 
-std::vector<Filme> buscaFilmeNome(std::string nomeFilme){
+std::vector<std::shared_ptr<Filme>> buscaFilmeNome(std::string nomeFilme, std::unordered_map<std::string, std::shared_ptr<Filme>>& listaConhecidos){
     std::ifstream arqInfoFilmes("infoFilmes");
-    std::vector<Filme> vetorFilme;
+    std::vector<std::shared_ptr<Filme>> vetorFilme;
     if (!arqInfoFilmes.is_open()) {
         msg_erro_arquivo();
         return vetorFilme;
     }
-    Filme filme;
     std::string linha;
     std::string id, tipo, titulo, tituloOrig, adulto, genero, subgenero, subsubgenero, anoInicio, anoFim, duracao;
     while (std::getline(arqInfoFilmes, linha)){
@@ -45,31 +60,39 @@ std::vector<Filme> buscaFilmeNome(std::string nomeFilme){
             std::string media;
             std::string numPessoas;
             buscaAvaliacao(id, media, numPessoas);
-            int classificacao = stoi(adulto);
-            int med = stod(media);
-            int nMed = stod(numPessoas);
-            filme.set(id,titulo, genero, subgenero, elenco, classificacao, med, nMed);
-            vetorFilme.push_back(filme);
+
+            int classificacao = adulto.empty() ? 0 : stoi(adulto);
+            float med = media.empty() ? 0.0 : stod(media);
+            int nMed = numPessoas.empty() ? 0 : stoi(numPessoas);
+            int ano = anoInicio.empty() ? 0 : stoi(anoInicio);
+            int d = duracao.empty() ? 0 : stoi(duracao);
+
+            auto filme = criarFilmePorGenero(genero);
+            filme->set(id, titulo, genero, subgenero, elenco, classificacao, med, nMed, ano, d);
+            listaConhecidos[id] = filme;  // Armazena no mapa
+
+            vetorFilme.push_back(filme); // Transfere o conteúdo para o vetor
         }
     }
     arqInfoFilmes.close();
     return vetorFilme;
-}
+} 
 
-Filme buscaFilmeId(std::string &id, std::unordered_map<std::string, Filme> listaConhecidos){
+std::shared_ptr<Filme> buscaFilmeId(const std::string &id, std::unordered_map<std::string, std::shared_ptr<Filme>> &listaConhecidos) {
     std::ifstream arqInfoFilmes("infoFilmes");
     if (!arqInfoFilmes.is_open()) {
         msg_erro_arquivo();
-        return Filme();
+        return nullptr;
     }
+
     auto it = listaConhecidos.find(id);
-    if(it != listaConhecidos.end()){    // Filme já procurado anteriormente
-        return listaConhecidos.at(id);
+    if (it != listaConhecidos.end()) {    // Filme já procurado anteriormente
+        return it->second;
     }
-    
+
     std::string linha;
     std::string aux, tipo, titulo, tituloOrig, adulto, genero, subgenero, subsubgenero, anoInicio, anoFim, duracao;
-    while (std::getline(arqInfoFilmes, linha)){
+    while (std::getline(arqInfoFilmes, linha)) {
         std::istringstream ss(linha);
         // Lê os campos separados por tabulação
         getline(ss, aux, '\t');
@@ -85,23 +108,29 @@ Filme buscaFilmeId(std::string &id, std::unordered_map<std::string, Filme> lista
         getline(ss, subsubgenero, '\t');
 
         // Verifica se o título corresponde ao filme buscado
-
         if (aux == id) {
             verificaGeneros(genero, subgenero, subsubgenero);      // Realiza as trocas de genero e subgenero se necessário
-            std::vector<std::string> elenco;
-            elenco = buscaElenco(id);
-            std::string media;
-            std::string numPessoas;
-            buscaAvaliacao(id, media, numPessoas);
-            int classificacao = stoi(adulto);
-            int med = stod(media);
-            int nMed = stod(numPessoas);
-            return Filme(id, titulo, genero, subgenero, elenco, classificacao, med, nMed);
+            std::vector<std::string> elenco = buscaElenco(aux);
+            std::string media, numPessoas;
+            buscaAvaliacao(aux, media, numPessoas);
+
+            int classificacao = adulto.empty() ? 0 : stoi(adulto);
+            float med = media.empty() ? 0.0 : stod(media);
+            int nMed = numPessoas.empty() ? 0 : stoi(numPessoas);
+            int ano = anoInicio.empty() ? 0 : stoi(anoInicio);
+            int d = duracao.empty() ? 0 : stoi(duracao);
+
+            auto filme = criarFilmePorGenero(genero);
+            filme->set(id, titulo, genero, subgenero, elenco, classificacao, med, nMed, ano, d);
+
+            listaConhecidos[id] = filme;  // Armazena no mapa
+            return filme;
         }
     }
     arqInfoFilmes.close();
-    return Filme();
+    return nullptr;
 }
+
 
 std::vector<std::string> buscaElenco(std::string &id){
     // Primeira parte: encontrar os ids dos atores do filme
@@ -211,16 +240,15 @@ void verificaGeneros(std::string &genero, std::string &subgenero, std::string &s
     }
 }
 
-std::vector<Filme> recomendacaoAtor(std::string &nome, std::unordered_map<std::string, Filme> listaConhecidos){
+std::vector<std::shared_ptr<Filme>> recomendaAtor(std::string &nome, std::unordered_map<std::string, std::shared_ptr<Filme>> &listaConhecidos){
     std::string linha;
     std::ifstream arqNomesPessoas("nomesPessoas");
-    std::vector<Filme> filmes;
+    std::vector<std::shared_ptr<Filme>> filmes;
     if (!arqNomesPessoas.is_open()) {
         msg_erro_arquivo();
         return filmes;
     }
     std::string id_pessoa, aux_nome, nasc, morte, profissao, titulos;
-    Filme f;
     std::string id_filme;
     while (std::getline(arqNomesPessoas, linha)) {
         std::istringstream ss(linha);
@@ -241,10 +269,14 @@ std::vector<Filme> recomendacaoAtor(std::string &nome, std::unordered_map<std::s
             std::sregex_iterator fim;
 
             while (it != fim) {
+                std::shared_ptr<Filme> f;
                 id_filme = (*it).str();
+
                 f = buscaFilmeId(id_filme, listaConhecidos);
-                if(!(f.getId()).empty())
+                // std::cout << f;
+                if(!(f->getId()).empty())
                     filmes.push_back(f);    // Filme encontrado
+                it++;
             }
             break;  // Já encontrou o ator e os seus filmes famosos
         }
@@ -259,18 +291,19 @@ struct Comparador {
     }
 };
 
-std::vector<Filme> recomendaGenero(std::string genero, std::unordered_map<std::string, Filme> listaConhecidos){
+std::vector<Filme> recomendaGenero(std::string genero, std::unordered_map<std::string, std::shared_ptr<Filme>> &listaConhecidos){
     std::ifstream arqInfoFilmes("infoFilmes");
     std::vector<Filme> filmes;
     if (!arqInfoFilmes.is_open()) {
         msg_erro_arquivo();
         return filmes;
     }
-    Filme f;
     // Utilizada para guardar os cinco filmes com maiores médias de avaliações
     std::priority_queue<Filme, std::vector<Filme>, Comparador> minHeap;
     std::string linha;
     std::string id, tipo, titulo, tituloOrig, adulto, aux_genero, subgenero, subsubgenero, anoInicio, anoFim, duracao;
+    int i =0;
+    int flag = 0;
     while (std::getline(arqInfoFilmes, linha)){
         std::istringstream ss(linha);
         // Lê os campos separados por tabulação
@@ -283,32 +316,44 @@ std::vector<Filme> recomendaGenero(std::string genero, std::unordered_map<std::s
         getline(ss, anoFim, '\t');
         getline(ss, duracao, '\t');
         getline(ss, aux_genero, ',');
+        // std::cout << aux_genero;
         getline(ss, subgenero, ',');
         getline(ss, subsubgenero, '\t');
 
         verificaGeneros(aux_genero, subgenero, subsubgenero);      // Realiza as trocas de genero e subgenero se necessário
-        if (genero == aux_genero) {
+        if (genero == aux_genero || genero == subgenero) {
+            std::shared_ptr<Filme> f;
             auto it = listaConhecidos.find(id);
             if (it != listaConhecidos.end()) {
                 f = it->second; // Filme já conhecido
+                flag = 0;
             } else {
-                std::vector<std::string> elenco;
-                elenco = buscaElenco(id);
                 std::string media;
                 std::string numPessoas;
                 buscaAvaliacao(id, media, numPessoas);
-                int classificacao = stoi(adulto);
-                int med = stod(media);
-                int nMed = stod(numPessoas);
-                f.set(id,titulo, genero, subgenero, elenco, classificacao, med, nMed);
+                float med = media.empty() ? 0.0 : stod(media);
+                if (minHeap.empty() || med > minHeap.top().getMediaBase()) {
+                    std::vector<std::string> elenco;
+                    elenco = buscaElenco(id);
+                    int classificacao = (adulto.empty() || std::any_of(adulto.begin(), adulto.end(), [](char c){ return !isdigit(c); })) ? 0 : std::stoi(adulto);
+                    int nMed = (numPessoas.empty() || std::any_of(numPessoas.begin(), numPessoas.end(), [](char c){ return !isdigit(c); })) ? 0 : std::stoi(numPessoas);
+                    int ano = (anoInicio.empty() || std::any_of(anoInicio.begin(), anoInicio.end(), [](char c){ return !isdigit(c); })) ? 0 : std::stoi(anoInicio);
+                    int d = (duracao.empty() || std::any_of(duracao.begin(), duracao.end(), [](char c){ return !isdigit(c); })) ? 0 : std::stoi(duracao);
+                    f = criarFilmePorGenero(genero);
+                    f->set(id,titulo, genero, subgenero, elenco, classificacao, med, nMed, ano, d);
+                    listaConhecidos[id] = f;  
+                    flag = 1;
+                }
             }
             // Tenta inserir o filme no Min-Heap
             if (minHeap.size() < 5) {
-                minHeap.push(f); // Insere diretamente se ainda não há 5 filmes
-            } else if (f.getMediaBase() > minHeap.top().getMediaBase()) {
+                minHeap.push(*f); // Insere diretamente se ainda não há 5 filmes
+                printf("insercoes antes de terem 5 na heap\n");
+            } else if (f->getMediaBase() > minHeap.top().getMediaBase()) {
                 minHeap.pop();    // Remove o menor filme
-                minHeap.push(f);  // Insere o novo filme
-            }
+                minHeap.push(*f);  // Insere o novo filme
+                printf("Estamos inserindo na heap!"); 
+            }           
         }
     }
     arqInfoFilmes.close();
