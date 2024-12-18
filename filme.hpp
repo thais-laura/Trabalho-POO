@@ -9,7 +9,6 @@
 #include "./json.hpp"
 #include "./json_fwd.hpp"
 #include "./avaliacao.hpp"
-// #include "./baseIMDb.hpp"
 
 // Classe Filme
 class Filme {
@@ -25,20 +24,21 @@ private:
     float _somaNotas;                // Soma total das notas para eficiência do código, pois em vez de recalcular a soma 
     int _ano;                        // Ano de lançamento do filme
     int _duracao;                    // Duração do filme em minutos
-    //de todas as notas toda vez que a média é atualizada, armazenamos a soma para poder adicionar ou subtrair valores conforme necessário
     std::unordered_map<std::string, Avaliacao> _avaliacoes; 
 
 public:
+    // Construtores
     Filme();
     explicit Filme(const std::string& genero);
     Filme(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
           const std::vector<std::string>& elenco, bool classificacao, float mediaBase,
           int nMediasBase, int ano, int duracao);
 
-
+    // Método set
     void set(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
              const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao);
 
+    // Métodos get
     std::string getId() const;
     std::string getNome() const;
     std::string getGenero() const;
@@ -50,6 +50,7 @@ public:
     int getAno() const;
     int getDuracao() const;
 
+    // Métodos sobre a avaliação
     void adicionarOuAtualizar(const std::string& idUsuario, float nota, const std::string& comentario = "");
     void removerAvaliacao(const std::string& idUsuario);
     void atualizarMedia();
@@ -58,10 +59,11 @@ public:
     // Destrutor virtual
     virtual ~Filme() = default;
     virtual std::string descricao() const;
+    // Impressão é virtual devido à impressão de outro método virtual: descricao()
     virtual void imprimeInfo(std::ostream& out) const;
     friend std::ostream& operator<<(std::ostream& out, const Filme& filme);
 
-    // Métodos de serialização e descrição
+    // Método para conversão para o formato JSON
     nlohmann::json toJSON() const;
     
 };
@@ -123,6 +125,7 @@ public:
     std::string descricao() const override;
 };
 
+// Fábrica para classe derivada
 std::shared_ptr<Filme> criarFilmePorGenero(const std::string& genero);
 
 

@@ -1,3 +1,6 @@
+// "This [website, program, service, application, product] uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB."
+// Dev: Gabriella Castelari, Isabela Muller e Thaís Laura
+
 #include "usuario.hpp"
 #include "registro.hpp"
 #include "./armazenamento.hpp"
@@ -9,11 +12,12 @@
 
 int main() {
     Registro registro;
-    char opcao;
+    std::string opcao;
+    char op;
     std::unordered_map<std::string, std::shared_ptr<Filme>> listaFilmes;
-
     std::unordered_map<std::string, Usuario> listaUsuarios;
 
+    // Carregar informações de sessões anteriores
     listaFilmes = carregarFilmes();
     listaUsuarios = carregarUsuarios();
 
@@ -21,8 +25,9 @@ int main() {
         std::cout << "\n=== Sistema de Avaliação de Filmes ===\n";
         std::cout << "1. Cadastro\n2. Login\n3. Sair\nEscolha uma opção: ";
         std::cin >> opcao;
+        op = opcao[0];
 
-        switch (opcao) {
+        switch (op) {
             case '1':
                 registro.cadastro(listaUsuarios);
                 break;
@@ -93,10 +98,9 @@ int main() {
                                 for(auto& f : ids){
                                     std::cout << "Filme " << i+1 << ":\n" << *listaFilmes[f];
                                     std::cout << "--------------------------\n";
-
                                     i++;
                                 }
-                                size_t escolhido = -1;
+                                int escolhido = -1;
                                 do {
                                     std::cout << "Digite qual filme vai ser avaliado (1-" << i << "): ";
                                     std::cin >> escolhido;
@@ -128,7 +132,8 @@ int main() {
                             } else {
                                 std::cout << "Filme '"<< nomeFilme<<"' não encontrado.\n";
                             }
-                        }else if (subOpcao == '4') { // Ver a melhor e a pior avaliação de certo filme
+                        }
+                        else if (subOpcao == '4') {     // Ver a melhor e a pior avaliação de certo filme
                             std::string nomeFilme;
                             std::cout << "Digite o nome do filme: ";
                             std::cin.ignore();
@@ -136,12 +141,10 @@ int main() {
 
                             std::vector<std::string> ids = buscaFilmeNome(nomeFilme, listaFilmes);
                             // Buscar o filme na lista de filmes
-                            if (!ids.empty()) { // Verifica se o filme foi encontrado
+                            if (!ids.empty()) {     // Verifica se o filme foi encontrado
                                 int i = 0;
-                                std::cout << "--------------------------\n";
                                 for(auto& f : ids){
                                     listaFilmes[f]->mostrarMelhorEPior();
-                                    std::cout << "--------------------------\n";
                                     i++;
                                 }
                             }else
@@ -157,12 +160,12 @@ int main() {
                                 std::string genero;
                                 std::cout << "Digite o gênero desejado: ";
                                 std::cin >> genero;
-
-                                auto recomendacoes = recomendaGenero(genero, listaFilmes);
+                                
+                                auto recomendacoes = recomendaGenero(genero);
                                 std::cout << "Filmes recomendados:\n";
                                 for (const auto& filme : recomendacoes) {
                                     std::cout << filme << "\n";
-                                }
+                                } 
                             } 
                             else if (tipoRecomendacao == 'A' || tipoRecomendacao == 'a') {
                                 std::string nomeAtor;
@@ -181,10 +184,10 @@ int main() {
                                 std::cout << "Opção inválida.\n";
                             }
                         }
-                        else if (subOpcao == '6') { 
+                        else if (subOpcao == '6') {     // Ver perfil do usuário
                             std::cout << listaUsuarios[usuarioLogado];
                         }
-                    } while (subOpcao != '7');
+                    } while (subOpcao != '7');  // Saída da conta
                     std::cout << "Logout realizado. Até logo!\n";
                 }
                 break;
@@ -195,7 +198,7 @@ int main() {
             default:
                 std::cout << "Opção inválida. Tente novamente.\n";
         }
-    } while (opcao != '3');
+    } while (op != '3');
 
     // Salvar os dados no JSON
     salvarFilmes(listaFilmes);

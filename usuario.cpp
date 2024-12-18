@@ -4,6 +4,7 @@
 // Construtor
 Usuario::Usuario(std::string nomeU, std::string password, std::string email1, std::vector<std::string> genero, std::string nomeC)
     : nomeUsuario(nomeU), senha(password), email(email1), generoFav(genero), nomeCompleto(nomeC) {}
+
 // Métodos get
 std::string Usuario::getSenha() const {return senha;}
 std::string Usuario::getNomeUsuario() const { return nomeUsuario; }
@@ -17,13 +18,17 @@ std::unordered_map<std::string, Avaliacao> Usuario::getAvaliacoes() const {retur
 void Usuario::adicionarAmigo(const std::string& amigo) {
     amigos.push_back(amigo);
 }
+
+// Retirar um amigo
 void Usuario::excluirAmigo(const std::string& amigo) {
     amigos.erase(std::remove(amigos.begin(), amigos.end(), amigo), amigos.end());
 }
+
 // Adicionar avaliação
 void Usuario::adicionarAvaliacao(const std::string& idFilme, const std::string& nomeFilme, float nota, const std::string& comentario) {
     avaliacoes[idFilme] = Avaliacao((*this).getNomeUsuario(), idFilme,nomeFilme, nota , comentario); // Adiciona ou sobrescreve a avaliação
 }
+
 // Retirar uma avaliação
 void Usuario::excluirAvaliacao(const std::string& idFilme){
     auto it = avaliacoes.find(idFilme);
@@ -32,8 +37,7 @@ void Usuario::excluirAvaliacao(const std::string& idFilme){
 }
 
 bool Usuario::operator==(const Usuario& other) const {
-    // Suponha que a comparação seja feita com base no id do usuário
-    return this->nomeUsuario == other.nomeUsuario;  // Adapte conforme a necessidade
+    return this->nomeUsuario == other.nomeUsuario;  // Comparação com login único
 }
 
 // Converter Usuario para JSON

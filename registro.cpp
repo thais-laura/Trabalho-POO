@@ -38,13 +38,13 @@ void Registro::cadastro(std::unordered_map<std::string, Usuario>& listaUsuarios)
     std::cout << "Digite 3 gêneros favoritos (ação, comédia, animação, terror, romance, suspense, drama): ";
     while (generos.size() < 3) {
         std::cin >> generoFav;
+        generoFav = converteMinusculo(generoFav);
         if (generosValidos.find(generoFav) != generosValidos.end()) {
             generos.push_back(generoFav);
         } else {
             std::cout << "Gênero inválido, tente novamente: ";
         }
     }
-
     std::cout << "Digite sua senha: ";
     std::cin >> senha;
 
@@ -70,7 +70,6 @@ std::string Registro::login(std::unordered_map<std::string, Usuario>& listaUsuar
         return "";
     }
 }
-
 
 void Registro::sair() {
     std::cout << "O programa está sendo encerrado.\n";

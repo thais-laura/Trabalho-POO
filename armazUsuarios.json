@@ -1,0 +1,92 @@
+[
+  {
+    "amigos": [],
+    "avaliacoes": [
+      {
+        "comentario": "Bem bacana, um clássico dos filmes!",
+        "id filme": "tt0068646",
+        "login": "thaislaura_",
+        "nota": 6.0,
+        "titulo": "The Godfather"
+      },
+      {
+        "comentario": "Gostei muito quando vi! Achei muito bonito.",
+        "id filme": "tt1049413",
+        "login": "thaislaura_",
+        "nota": 8.0,
+        "titulo": "Up"
+      },
+      {
+        "comentario": "muito bom!",
+        "id filme": "tt0387564",
+        "login": "thaislaura_",
+        "nota": 9.0,
+        "titulo": "Saw"
+      }
+    ],
+    "email": "thais.laura@usp.br",
+    "generos": [
+      "romance",
+      "comedia",
+      "drama"
+    ],
+    "login": "thaislaura_",
+    "nome": "thais laura anicio andrade",
+    "senha": "thais123"
+  },
+  {
+    "amigos": [],
+    "avaliacoes": [],
+    "email": "gabicastelari@usp.br",
+    "generos": [
+      "romance",
+      "animacao",
+      "suspense"
+    ],
+    "login": "gabi_c",
+    "nome": "gabriella castelari",
+    "senha": "gabi123"
+  },
+  {
+    "amigos": [],
+    "avaliacoes": [
+      {
+        "comentario": "ok",
+        "id filme": "tt2332518",
+        "login": "isa.muller",
+        "nota": 9.0,
+        "titulo": "Till Luck Do Us Part"
+      },
+      {
+        "comentario": "Muito top!",
+        "id filme": "tt0147800",
+        "login": "isa.muller",
+        "nota": 10.0,
+        "titulo": "10 Things I Hate About You"
+      },
+      {
+        "comentario": "ok",
+        "id filme": "tt1049413",
+        "login": "isa.muller",
+        "nota": 3.0,
+        "titulo": "Up"
+      },
+      {
+        "comentario": "Muito assustador",
+        "id filme": "tt0054215",
+        "login": "isa.muller",
+        "nota": 4.0,
+        "titulo": "Psycho"
+      }
+    ],
+    "email": "isa.muller@usp.br",
+    "generos": [
+      "terror",
+      "suspense",
+      "acao"
+    ],
+    "login": "isa.muller",
+    "nome": "isabela muller",
+    "senha": "isa123"
+  }
+]

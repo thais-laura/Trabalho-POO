@@ -42,29 +42,29 @@ int Filme::getDuracao() const { return _duracao; }
 // Adicionar ou atualizar uma avaliação
 void Filme::adicionarOuAtualizar(const std::string& idUsuario, float nota, const std::string& comentario) {
     if (nota < 0 || nota > 10) {
-        std::cerr << "Nota invalida. Deve estar entre 0 e 10.\n";
+        std::cout << "Nota invalida. Deve estar entre 0 e 10.\n";
         return;
     }
     if (_avaliacoes.find(idUsuario) != _avaliacoes.end()) {  // Verifica se já existe uma avaliação para o usuário (ID do usuário)
         // Atualizar avaliação existente
-        _somaNotas -= _avaliacoes[idUsuario].getNota(); // Remove a nota antiga da soma total
-        _avaliacoes[idUsuario].set(idUsuario, _id, _nome, nota, comentario); // Atualiza os detalhes da avaliação existente
+        _somaNotas -= _avaliacoes[idUsuario].getNota();                         
+        _avaliacoes[idUsuario].set(idUsuario, _id, _nome, nota, comentario); 
     } else {
         // Adicionar nova avaliação
-        _avaliacoes[idUsuario] = Avaliacao(idUsuario, _id, _nome, nota, comentario); // Cria uma nova avaliação
-        _nMediasBase++; // Incrementa o contador de avaliações
+        _avaliacoes[idUsuario] = Avaliacao(idUsuario, _id, _nome, nota, comentario); 
+        _nMediasBase++; 
     }
-    _somaNotas += nota; // Adiciona a nova nota à soma total das notas
-    atualizarMedia(); // Atualiza a média de notas do filme
+    _somaNotas += nota;                                                     
+    atualizarMedia();                                                       // Atualiza a média de notas do filme
 }
 
 // Remover uma avaliação
 void Filme::removerAvaliacao(const std::string& idUsuario) {
     if (_avaliacoes.find(idUsuario) != _avaliacoes.end()) { // Verifica se há uma avaliação existente para o ID do usuário fornecido
-        _somaNotas -= _avaliacoes[idUsuario].getNota(); // Remove a nota correspondente da soma total de notas
-        _avaliacoes.erase(idUsuario); // Remove a avaliação do mapa
-        _nMediasBase--; // Decrementa o número de avaliações registradas
-        atualizarMedia(); // Atualiza a média de notas do filme
+        _somaNotas -= _avaliacoes[idUsuario].getNota();     // Remove a nota correspondente da soma total de notas
+        _avaliacoes.erase(idUsuario);                       // Remove a avaliação do mapa
+        _nMediasBase--;                                     // Decrementa o número de avaliações registradas
+        atualizarMedia();                                   // Atualiza a média de notas do filme
         std::cout << "Avaliacao removida com sucesso.\n";
     } else {
         std::cout << "Nenhuma avaliacao encontrada para este usuario.\n";
@@ -76,7 +76,7 @@ void Filme::atualizarMedia() {
     if (_nMediasBase > 0) {
         _mediaBase = _somaNotas / _nMediasBase; // Calcula a média dividindo a soma total das notas pelo número de avaliações
     } else {
-        _mediaBase = _mediaBase; // Mantém o valor atual de _mediaBase se não houver avaliações
+        _mediaBase = _mediaBase;                // Mantém o valor atual de _mediaBase se não houver avaliações
     }
 }
 
@@ -86,12 +86,12 @@ void Filme::mostrarMelhorEPior() const {
         std::cout << "Sem avaliacoes disponiveis.\n";
         return;
     }
-// Inicializa as variáveis para verificar as melhores e piores avaliações
+    // Inicializa as variáveis para verificar as melhores e piores avaliações
     float melhorNota = -1, piorNota = 11;
     std::string melhorUsuario, piorUsuario, melhorComentario, piorComentario; // Para armazenar os usuários das melhores e piores avaliações/comentários
 
     for (const auto& [idUsuario, avaliacao] : _avaliacoes) {  // Percorre todas as avaliações registradas no mapa
-        float nota = avaliacao.getNota(); // Obtém a nota da avaliação
+        float nota = avaliacao.getNota(); 
         if (nota > melhorNota) { // Atualiza a melhor avaliação encontrada
             melhorNota = nota;
             melhorUsuario = avaliacao.getIdUsuario();
@@ -124,7 +124,7 @@ void Filme::imprimeInfo(std::ostream& out) const {
     out << "Genero: " << _genero << " (" << _subgenero << ")\n";
     out << "Ano: " << _ano << "\n";
     out << "Duracao: " << _duracao << " minutos\n";
-    out << descricao() << "\n";  // Chama a descrição dinâmica
+    out << descricao() << "\n";                     // Chama a descrição dinâmica
     out << "Elenco: ";
     for (const auto& ator : _elenco) {
         out << ator << ", ";
@@ -145,13 +145,13 @@ std::ostream& operator<<(std::ostream& out, const Filme& filme) {
 
 nlohmann::json Filme::toJSON() const {
     std::vector<nlohmann::json> avaliacoesJson;
-    for (auto [id, av] : _avaliacoes) {   // criar os modelos para salvar no arquivo a partir da sobrecarga
+    for (auto [id, av] : _avaliacoes) {         // Criar os modelos para salvar no arquivo a partir da sobrecarga
         avaliacoesJson.push_back(av.toJSON());
     }
     return {
         {"id", _id},
         {"titulo", _nome},
-        {"elenco", _elenco},    // apesar de ser um vector, o json consegue manipular as std::string
+        {"elenco", _elenco},                    // Apesar de ser um vector, o json consegue manipular as std::string
         {"genero", _genero},
         {"subgenero", _subgenero},
         {"ano", _ano},
@@ -159,14 +159,14 @@ nlohmann::json Filme::toJSON() const {
         {"classificacao", _classificacao},
         {"media", _mediaBase},
         {"quantidade de avaliações", _nMediasBase},
-        {"avaliacoes", avaliacoesJson} // por ser um vector de outra classe, é necessário sobrecarrgear em avaliacoes
+        {"avaliacoes", avaliacoesJson}          // Por ser um vector de outra classe, é necessário sobrecarrgear em avaliacoes
     };
 }
+
 Acao::Acao() : Filme("Ação"){}
 Acao::Acao(const std::string& id, const std::string& nome, const std::string& subgenero,
     const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao) {
     Filme(id, nome, "Ação", subgenero, elenco, classificacao, mediaBase, nMediasBase, ano, duracao); }
-
 std::string Acao::descricao() const {
     return "Os filmes de acao sao conhecidos por sua intensidade e energia. Desse modo, eles trazem sequencias emocionantes, como por exemplo: lutas, perseguicoes, explosoes e muita adrenalina.";
 }
@@ -175,26 +175,26 @@ Comedia::Comedia() : Filme("Comédia"){}
 Comedia::Comedia(const std::string& id, const std::string& nome, const std::string& subgenero,
     const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao) {        
         Filme(id, nome, "Comédia", subgenero, elenco, classificacao, mediaBase, nMediasBase, ano, duracao); }
-
 std::string Comedia::descricao() const {
     return "A comedia apresenta personagens engracados, situacoes absurdas e dialogos espirituosos. Com isso, esse genero busca entreter e proporcionar leveza ao publico.";
 }
+
 Animacao::Animacao() : Filme("Animação"){}
 Animacao::Animacao(const std::string& id, const std::string& nome, const std::string& subgenero,
     const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao) {       
         Filme(id, nome, "Animação", subgenero, elenco, classificacao, mediaBase, nMediasBase, ano, duracao); }
-
 std::string Animacao::descricao() const {
     return "Os filmes de animacao encantam a todos com historias cativantes e visuais impressionantes, que transportam para mundos magicos e ludicos. Podem ser criados com tecnicas como desenho a mao, modelagem 3D ou stop-motion.";
 }
+
 Terror::Terror() : Filme("Terror"){}
 Terror::Terror(const std::string& id, const std::string& nome,  const std::string& subgenero,
     const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao) {
         Filme(id, nome, "Terror", subgenero, elenco, classificacao, mediaBase, nMediasBase, ano, duracao); }
-
 std::string Terror::descricao() const {
     return "O terror explora uma atmosfera sombria e cheia de suspense. Utilizando de artificios para causar sustos, trilhas sonoras arrepiantes e temas macabros, provocando fortes emocoes.";
 }
+
 Romance::Romance() : Filme("Romance"){}
 Romance::Romance(const std::string& id, const std::string& nome,  const std::string& subgenero,
     const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao) { 
@@ -211,6 +211,7 @@ const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int
 std::string Suspense::descricao() const {
     return "O suspense prende a atencao com tramas inteligentes, misterios intrigantes e reviravoltas inesperadas. Nesse sentido, desafia o publico a desvendar enigmas e a ficar atento em cada detalhe.";
 }
+
 Drama::Drama() : Filme("Drama"){}
 Drama::Drama(const std::string& id, const std::string& nome, const std::string& subgenero,
     const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao)  {
@@ -219,6 +220,7 @@ std::string Drama::descricao() const {
     return "O drama explora narrativas intensas e emocionais, baseadas em conflitos humanos, dilemas morais ou desafios da vida. Com historias profundas e reflexivas, esse genero conecta o publico as complexidades das relacoes.";
 }
 
+// Fábrica de ponteiro para classe derivada
 std::shared_ptr<Filme> criarFilmePorGenero(const std::string& genero) {
     if (genero == "Ação") {
         return std::make_shared<Acao>();

@@ -8,6 +8,7 @@
 #include "./avaliacao.hpp"
 #include "./filme.hpp"
 
+// Classe Usuário
 class Usuario {
 private:
     std::string nomeUsuario;

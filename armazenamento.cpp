@@ -3,41 +3,11 @@
 //jsoneditoronline.org
 using json = nlohmann::json;
 
-void salvarFilmes(std::unordered_map<std::string, std::shared_ptr<Filme>> &listaFilmes){
-    nlohmann::json jsonFilmes = nlohmann::json::array();
-
-    for (auto [id, filme] : listaFilmes) {
-        jsonFilmes.push_back((*filme).toJSON());
-    }
-
-    std::ofstream arquivo("armazFilmes.json");
-    if(arquivo.is_open())
-        arquivo << jsonFilmes.dump(2); // Formatação com 4 espaços de indentação
-    else msg_erro_arq();
-
-    std::cout << "Filmes salvos\n";
-}
-
-void salvarUsuarios(std::unordered_map<std::string, Usuario> &listaUsuarios){
-    json jsonUsuarios = json::array();
-
-    for (auto [id, usuario] : listaUsuarios) {
-        jsonUsuarios.push_back(usuario.toJSON());
-    }
-
-    std::ofstream arquivo("armazUsuarios.json");
-    if(arquivo.is_open())
-        arquivo << jsonUsuarios.dump(2); // Formatação com 4 espaços de indentação
-    else msg_erro_arq();
-
-    std::cout << "Usuários salvos\n";
-}
-
+// Carregar para a memória principal as informações das sessões antigas
 std::unordered_map<std::string, std::shared_ptr<Filme>> carregarFilmes(){
     std::unordered_map<std::string, std::shared_ptr<Filme>> listaFilmes;
     std::ifstream arquivo("armazFilmes.json");
     if (!arquivo.is_open()) {
-        msg_erro_arq();
         return listaFilmes;
     }
 
@@ -66,7 +36,6 @@ std::unordered_map<std::string, std::shared_ptr<Filme>> carregarFilmes(){
                 );
 
             }
-
             // Carrega as avaliações associadas ao filme
             if (aux.contains("avaliacoes")) {
                 for (const auto& av : aux["avaliacoes"]) {
@@ -94,7 +63,6 @@ std::unordered_map<std::string, Usuario> carregarUsuarios(){
     std::unordered_map<std::string, Usuario> listaUsuarios;
     std::ifstream arquivo("armazUsuarios.json");
     if (!arquivo.is_open()) {
-        msg_erro_arq();
         return listaUsuarios;
     }
 
@@ -130,4 +98,35 @@ std::unordered_map<std::string, Usuario> carregarUsuarios(){
         }
     }
     return listaUsuarios;
+}
+
+// Atualizar o arquivo com as novas informações após a finalização do programa
+void salvarFilmes(std::unordered_map<std::string, std::shared_ptr<Filme>> &listaFilmes){
+    nlohmann::json jsonFilmes = nlohmann::json::array();
+
+    for (auto [id, filme] : listaFilmes) {
+        jsonFilmes.push_back((*filme).toJSON());
+    }
+
+    std::ofstream arquivo("armazFilmes.json");
+    if(arquivo.is_open())
+        arquivo << jsonFilmes.dump(2); // Formatação com 4 espaços de indentação
+    else msg_erro_arq();
+
+    std::cout << "Filmes salvos\n";
+}
+
+void salvarUsuarios(std::unordered_map<std::string, Usuario> &listaUsuarios){
+    json jsonUsuarios = json::array();
+
+    for (auto [id, usuario] : listaUsuarios) {
+        jsonUsuarios.push_back(usuario.toJSON());
+    }
+
+    std::ofstream arquivo("armazUsuarios.json");
+    if(arquivo.is_open())
+        arquivo << jsonUsuarios.dump(2); // Formatação com 4 espaços de indentação
+    else msg_erro_arq();
+
+    std::cout << "Usuários salvos\n";
 }

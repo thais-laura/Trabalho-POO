@@ -1,11 +1,13 @@
 #ifndef REGISTRO_HPP
 #define REGISTRO_HPP
 
-#include "usuario.hpp"
+#include "./usuario.hpp"
+#include "./auxiliar.hpp"
 #include <unordered_map>
 #include <string>
 #include <set>
 
+// Classe Registro
 class Registro {
 private:
     std::unordered_map<std::string, Usuario> usuariosCadastrados;
