@@ -13,12 +13,10 @@
 #include "./avaliacao.hpp"
 #include "./filme.hpp"
 #include "./usuario.hpp"
+#include "./auxiliar.hpp"
 
-void msg_erro_arq(){
-    printf("Falha no processamento do arquivo\n");
-}
-void salvarFilmes(std::unordered_map<std::string, Filme> & listaFilmes);
+void salvarFilmes(std::unordered_map<std::string, std::shared_ptr<Filme>> & listaFilmes);
 void salvarUsuarios(std::unordered_map<std::string, Usuario>& listaUsuarios);
 std::unordered_map<std::string, Usuario> carregarUsuarios();
-std::unordered_map<std::string, Filme> carregarFilmes();
+std::unordered_map<std::string, std::shared_ptr<Filme>> carregarFilmes();
 #endif // ARMAZENAMENTO_HPP

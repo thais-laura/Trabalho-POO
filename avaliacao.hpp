@@ -8,7 +8,6 @@
 #include <algorithm>
 #include "./json.hpp"
 #include "./json_fwd.hpp"
-#include "baseIMDb.hpp"
 
 // Classe Avaliacao
 class Avaliacao {
@@ -16,8 +15,8 @@ private:
     std::string _idUsuario;    // ID do usuário que fez a avaliação
     std::string _idFilme;      // ID do filme avaliado
     std::string _nomeFilme;    // Nome do filme avaliado
-    std::string _comentario;   // Comentário feito pelo usuário
     float _nota;               // Nota dada pelo usuário
+    std::string _comentario;   // Comentário feito pelo usuário
 
 public:
     Avaliacao();

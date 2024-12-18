@@ -9,7 +9,7 @@
 #include "./json.hpp"
 #include "./json_fwd.hpp"
 #include "./avaliacao.hpp"
-#include "./baseIMDb.hpp"
+// #include "./baseIMDb.hpp"
 
 // Classe Filme
 class Filme {
@@ -20,11 +20,11 @@ private:
     std::string _subgenero;          // Subgênero
     std::vector<std::string> _elenco; // Vetor de strings para elenco
     bool _classificacao;            // Classificação indicativa: 1 = adulto, 0 = não adulto
-    int _ano;                        // Ano de lançamento do filme
-    int _duracao;                    // Duração do filme em minutos
     float _mediaBase;                // Média 
     int _nMediasBase;                // Número de avaliações na base de dados
     float _somaNotas;                // Soma total das notas para eficiência do código, pois em vez de recalcular a soma 
+    int _ano;                        // Ano de lançamento do filme
+    int _duracao;                    // Duração do filme em minutos
     //de todas as notas toda vez que a média é atualizada, armazenamos a soma para poder adicionar ou subtrair valores conforme necessário
     std::unordered_map<std::string, Avaliacao> _avaliacoes; 
 
@@ -37,8 +37,7 @@ public:
 
 
     void set(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
-             const std::vector<std::string>& elenco, bool classificacao, float mediaBase,
-             int nMediasBase, int ano, int duracao);
+             const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao);
 
     std::string getId() const;
     std::string getNome() const;
@@ -71,7 +70,7 @@ public:
 class Acao : public Filme {
 public:
     Acao();
-    Acao(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+    Acao(const std::string& id, const std::string& nome, const std::string& subgenero,
           const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao);
     std::string descricao() const override;
 };
@@ -79,7 +78,7 @@ public:
 class Comedia : public Filme {
 public:
     Comedia();
-    Comedia(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+    Comedia(const std::string& id, const std::string& nome, const std::string& subgenero,
           const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao);
     std::string descricao() const override;
 };
@@ -87,7 +86,7 @@ public:
 class Animacao : public Filme {
 public:
     Animacao();
-    Animacao(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+    Animacao(const std::string& id, const std::string& nome, const std::string& subgenero,
           const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao);
     std::string descricao() const override;
 };
@@ -95,7 +94,7 @@ public:
 class Terror : public Filme {
 public:
     Terror();
-    Terror(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+    Terror(const std::string& id, const std::string& nome, const std::string& subgenero,
           const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao);
     std::string descricao() const override;
 };
@@ -103,7 +102,7 @@ public:
 class Romance : public Filme {
 public:
     Romance();
-    Romance(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+    Romance(const std::string& id, const std::string& nome, const std::string& subgenero,
           const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao);
     std::string descricao() const override;
 };
@@ -111,7 +110,7 @@ public:
 class Suspense : public Filme {
 public:
     Suspense();
-    Suspense(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+    Suspense(const std::string& id, const std::string& nome, const std::string& subgenero,
           const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao);
     std::string descricao() const override;
 };
@@ -119,7 +118,7 @@ public:
 class Drama : public Filme {
 public:
     Drama();
-    Drama(const std::string& id, const std::string& nome, const std::string& genero, const std::string& subgenero,
+    Drama(const std::string& id, const std::string& nome, const std::string& subgenero,
           const std::vector<std::string>& elenco, bool classificacao, float mediaBase, int nMediasBase, int ano, int duracao);
     std::string descricao() const override;
 };

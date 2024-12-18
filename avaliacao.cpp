@@ -1,7 +1,7 @@
 #include "./avaliacao.hpp"
 
 // Implementação da classe Avaliacao
-Avaliacao::Avaliacao() : _idUsuario(""), _idFilme(""), _nomeFilme(""), _comentario(""), _nota(-1) {}
+Avaliacao::Avaliacao() : _idUsuario(""), _idFilme(""), _nomeFilme(""), _nota(-1), _comentario("") {}
 
 Avaliacao::Avaliacao(const std::string& idUsuario, const std::string& idFilme, 
                      const std::string& nomeFilme, float nota, const std::string& comentario)
@@ -26,18 +26,18 @@ nlohmann::json Avaliacao::toJSON() const {
     return {
         {"login", _idUsuario},
         {"id filme", _idFilme},
-        {"nome", _nomeFilme},
+        {"titulo", _nomeFilme},
         {"nota", _nota},
         {"comentario", _comentario}
     };
 }
 
 std::ostream& operator<<(std::ostream& out, const Avaliacao& avaliacao) {
-    out << "Filme: " << avaliacao._nomeFilme << " (ID: " << avaliacao._idFilme << ")\n";
-    out << "Usuario: " << avaliacao._idUsuario << "\n";
-    out << "Nota: " << avaliacao._nota << "/10\n";
+    out << "Filme: " << avaliacao.getNomeFilme() << " (ID: " << avaliacao.getIdFilme() << ")\n";
+    out << "Usuario: " << avaliacao.getIdUsuario() << "\n";
+    out << "Nota: " << avaliacao.getNota() << "/10\n";
     if (!avaliacao._comentario.empty()) {
-        out << "Comentario: " << avaliacao._comentario << "\n";
+        out << "Comentario: " << avaliacao.getComentario() << "\n";
     }
     return out;
 }

@@ -4,7 +4,6 @@
 // Construtor
 Usuario::Usuario(std::string nomeU, std::string password, std::string email1, std::vector<std::string> genero, std::string nomeC)
     : nomeUsuario(nomeU), senha(password), email(email1), generoFav(genero), nomeCompleto(nomeC) {}
-
 // Métodos get
 std::string Usuario::getSenha() const {return senha;}
 std::string Usuario::getNomeUsuario() const { return nomeUsuario; }
@@ -12,6 +11,7 @@ std::string Usuario::getEmail() const { return email; }
 std::vector<std::string> Usuario::getGeneroFav() const { return generoFav; }
 std::string Usuario::getNomeCompleto() const { return nomeCompleto; }
 std::vector<std::string> Usuario::getAmigos() const { return amigos; }
+std::unordered_map<std::string, Avaliacao> Usuario::getAvaliacoes() const {return avaliacoes;}
 
 // Adicionar amigo
 void Usuario::adicionarAmigo(const std::string& amigo) {
@@ -31,14 +31,16 @@ void Usuario::excluirAvaliacao(const std::string& idFilme){
         avaliacoes.erase(it); // Remove a avaliação associada ao idFilme
 }
 
+bool Usuario::operator==(const Usuario& other) const {
+    // Suponha que a comparação seja feita com base no id do usuário
+    return this->nomeUsuario == other.nomeUsuario;  // Adapte conforme a necessidade
+}
+
 // Converter Usuario para JSON
 nlohmann::json Usuario::toJSON() const {
     std::vector<nlohmann::json> avaliacoesJson;
-
-    for (const auto& [id, av] : avaliacoes) {
-        nlohmann::json avJson = av.toJSON();
-        avJson["id_filme"] = id;
-        avaliacoesJson.push_back(avJson);
+    for (auto [id, av] : avaliacoes) {   // criar os modelos para salvar no arquivo a partir da sobrecarga
+        avaliacoesJson.push_back(av.toJSON());
     }
 
     return {
@@ -47,6 +49,7 @@ nlohmann::json Usuario::toJSON() const {
         {"email", email},
         {"generos", generoFav},
         {"nome", nomeCompleto},
-        {"avaliacoes", avaliacoesJson}
+        {"avaliacoes", avaliacoesJson},
+        {"amigos", amigos}
     };
 }

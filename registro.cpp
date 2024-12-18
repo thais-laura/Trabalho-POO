@@ -74,5 +74,4 @@ std::string Registro::login(std::unordered_map<std::string, Usuario>& listaUsuar
 
 void Registro::sair() {
     std::cout << "O programa está sendo encerrado.\n";
-    exit(0);
 }

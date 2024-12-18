@@ -10,8 +10,8 @@
 
 class Usuario {
 private:
-    std::string senha;
     std::string nomeUsuario;
+    std::string senha;
     std::string email;
     std::vector<std::string> generoFav;
     std::vector<std::string> amigos;
@@ -23,7 +23,7 @@ private:
 public:
     // Construtor
     Usuario(std::string nomeU, std::string password, std::string email1, std::vector<std::string> genero, std::string nomeC);
-
+    Usuario() = default; 
     // Métodos get
     std::string getSenha() const;
     std::string getNomeUsuario() const;
@@ -31,6 +31,7 @@ public:
     std::vector<std::string> getGeneroFav() const;
     std::string getNomeCompleto() const;
     std::vector<std::string> getAmigos() const;
+    std::unordered_map<std::string, Avaliacao> getAvaliacoes() const;
 
     // Métodos para amigos
     void adicionarAmigo(const std::string& amigo);
@@ -39,17 +40,26 @@ public:
     // Métodos para avaliações
     void adicionarAvaliacao(const std::string& idFilme, const std::string& nomeFilme, float nota, const std::string& comentario);
     void excluirAvaliacao(const std::string& idFilme);
+    bool operator==(const Usuario& other) const;
 
     friend std::ostream& operator<<(std::ostream& out, const Usuario& usuario){
         out << "Login: " << usuario.getNomeUsuario() << "\n"
             << "Nome completo: " << usuario.getNomeCompleto() << "\n"
-            << "Email: " << usuario.getEmail()
+            << "Email: " << usuario.getEmail() << "\n"
             << "Gêneros Favoritos: ";
         for(auto a : usuario.getGeneroFav())
-            out << a << "\n";
-        out << "Amigos: ";
-        for(auto a : usuario.getAmigos())
-            out << a << "\n";
+            out << a << " ";
+        out << "\n";
+        if(!usuario.getAmigos().empty()){
+            out << "Amigos: ";
+            for(auto a : usuario.getAmigos())
+                out << a << " ";
+        }
+        out << "\n";
+        if(!usuario.getAvaliacoes().empty())
+            out << "Avaliações: ";
+        for(auto [id, av] : usuario.getAvaliacoes())
+            out << av << "\n";
         return out;
     }
     
